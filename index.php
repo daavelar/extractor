@@ -16,5 +16,5 @@ libxml_clear_errors();
 
 foreach ($dom->getElementsByTagName('img') as $node)
 {
-  copy($node->getAttribute('src'), 'girls/' . uniqid() . '.jpg');
+  copy($node->getAttribute('src'), 'files/' . uniqid() . '.jpg');
 }
