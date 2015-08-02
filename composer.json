@@ -10,5 +10,5 @@
             "email": "diegoarmando2011@gmail.com"
         }
     ],
-    "bin": ["extractor"]
+    "bin": ["index.php"]
 }
