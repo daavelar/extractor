@@ -2,7 +2,7 @@
     "name": "daavelar/extractor",
     "description": "Extract all images from html page",
     "require": {
-        "guzzlehttp/guzzle": "5.3.0"
+        "guzzlehttp/guzzle": "^6.0"
     },
     "authors": [
         {
