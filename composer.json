@@ -1,5 +1,13 @@
 {
+    "name": "diegoavelar/extractor",
+    "description": "Extract all links from html pages",
     "require": {
         "guzzlehttp/guzzle": "^6.0"
-    }
+    },
+    "authors": [
+        {
+            "name": "Diego Avelar",
+            "email": "diegoarmando2011@gmail.com"
+        }
+    ]
 }
