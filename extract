@@ -5,6 +5,10 @@ require __DIR__.'/vendor/autoload.php';
 
 $url = $argv[1];
 
+if(count($argv) == 1) {
+	exit('You need to specify the Url');
+}
+
 $client = new GuzzleHttp\Client();
 $page = $client->get($url);
 
