@@ -1,6 +1,6 @@
 {
     "name": "diegoavelar/extractor",
-    "description": "Extract all links from html pages",
+    "description": "Extract all images from html page",
     "require": {
         "guzzlehttp/guzzle": "^6.0"
     },
