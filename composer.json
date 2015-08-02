@@ -1,6 +1,7 @@
 {
     "name": "daavelar/extractor",
     "description": "Extract all images from html page",
+    minimum-stability: "dev",
     "require": {
         "guzzlehttp/guzzle": "^6.0"
     },
