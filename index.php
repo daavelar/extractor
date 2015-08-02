@@ -1,6 +1,20 @@
 #!/usr/bin/php
 <?php 
 
+require 'vendor/autoload.php';
+
 $url = $argv[1];
 
-print_r($url);
+$client = new GuzzleHttp\Client();
+$page = $client->get($url);
+
+$dom = new DOMDocument;
+
+libxml_use_internal_errors(true);
+$dom->loadHTML($page->getBody());
+libxml_clear_errors();
+
+foreach ($dom->getElementsByTagName('img') as $node)
+{
+  copy($node->getAttribute('src'), 'girls/' . uniqid() . '.jpg');
+}
