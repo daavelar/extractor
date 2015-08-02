@@ -1,10 +1,6 @@
 {
     "name": "daavelar/extractor",
     "description": "Extract all images from html page",
-    "config": {
-	"preferred-install": "dist"
-     },
-    "minimum-stability": "stable",
     "require": {
         "guzzlehttp/guzzle": "^6.0"
     },
@@ -13,5 +9,6 @@
             "name": "Diego Avelar",
             "email": "diegoarmando2011@gmail.com"
         }
-    ]
+    ],
+    "bin": ["extractor"]
 }
