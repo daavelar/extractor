@@ -1,7 +1,10 @@
 {
     "name": "daavelar/extractor",
     "description": "Extract all images from html page",
-    "prefer-stable": "true",
+    "config": {
+		"preferred-install": "dist"
+	},
+	"minimum-stability": "stable",
     "require": {
         "guzzlehttp/guzzle": "^6.0"
     },
