@@ -18,3 +18,4 @@ foreach ($dom->getElementsByTagName('img') as $node)
 {
   copy($node->getAttribute('src'), 'files/' . uniqid() . '.jpg');
 }
+
