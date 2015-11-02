@@ -2,4 +2,4 @@
 
 Extract all images from html page.
 
-extractor $url
+extractor $url [$folder]
