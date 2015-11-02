@@ -4,7 +4,7 @@ This script download all images from html page.
 
 # Installing
 
-composer global require daavelar/extractor
+`composer global require daavelar/extractor`
 
 Make sure your composer bin files are executable
 
