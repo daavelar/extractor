@@ -27,7 +27,11 @@ foreach ($dom->getElementsByTagName('img') as $node)
 {
 	$localfile = $folder . '/' . uniqid() . '.jpg';
 
-	if(copy($node->getAttribute('src'), $localfile)) {
+	$toDownload = (substr($node->getAttribute('src'), 0, 4) == 'http')
+				 ? $node->getAttribute('src') 
+				 : 'http://' . $node->getAttribute('src');
+
+	if(copy($toDownload, $localfile)) {
 		echo 'Downloading file ' . $node->getAttribute('src') . " to $localfile\n";
 	}
 
