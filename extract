@@ -5,7 +5,7 @@ require __DIR__.'/../../../vendor/autoload.php';
 
 $url = $argv[1];
 
-$folder = isset($argv[2]) ? $argv[2] : '.';
+$folder = isset($argv[2]) ? rtrim($argv[2], '/') : '.';
 
 if(! is_dir($folder)) {
 	mkdir($folder);
