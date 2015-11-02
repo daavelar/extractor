@@ -10,6 +10,6 @@ Make sure your composer bin files are executable
 
 # Using
 
-extractor $url [$folder]
+`extractor $url [$folder]`
 
 Note: If you don't specify some folder, the files will be downloaded in your current directory
