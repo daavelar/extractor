@@ -27,10 +27,16 @@ foreach ($dom->getElementsByTagName('img') as $node)
 {
 	$localfile = $folder . '/' . uniqid() . '.jpg';
 
-	$toDownload = (substr($node->getAttribute('src'), 0, 4) == 'http')
-				 ? $node->getAttribute('src') 
-				 : 'http://' . $node->getAttribute('src');
-
+	if($node->getAttribute('src')[0] == '/') {
+		$site = parse_url($url);
+		$toDownload = $site['scheme'] . '://' . $site['host'] . $node->getAttribute('src');
+	}
+	else {
+		$toDownload = (substr($node->getAttribute('src'), 0, 4) == 'http')
+		? $node->getAttribute('src') 
+		: 'http://' . $node->getAttribute('src');
+	}
+	
 	if(copy($toDownload, $localfile)) {
 		echo 'Downloading file ' . $node->getAttribute('src') . " to $localfile\n";
 	}
