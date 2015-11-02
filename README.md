@@ -6,6 +6,10 @@ This script download all images from html page.
 
 composer global require daavelar/extractor
 
-# Putting all ~/.composer dir in your 
+Make sure your composer bin files are executable
+
+# Using
 
 extractor $url [$folder]
+
+Note: If you don't specify some folder, the files will be downloaded in your current directory
