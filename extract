@@ -1,45 +1,134 @@
-#!/usr/bin/php
-<?php 
-
-require __DIR__.'/../../../vendor/autoload.php';
+<?php
+// Verifica se a URL foi passada como parâmetro
+if ($argc < 2) {
+    echo "Uso: php " . $argv[0] . " <URL>\n";
+    exit(1);
+}
 
 $url = $argv[1];
 
-$folder = isset($argv[2]) ? rtrim($argv[2], '/') : '.';
-
-if(! is_dir($folder)) {
-	mkdir($folder);
+// Obtém o conteúdo HTML da página
+$html = file_get_contents($url);
+if ($html === false) {
+    echo "Erro ao acessar a URL: $url\n";
+    exit(1);
 }
 
-if(count($argv) == 1) {
-	exit("You need to specify the Url\n");
-}
-
-$page = file_get_contents($url);
-
-$dom = new DOMDocument;
-
+// Configura o DOM para tratar erros de HTML mal formatado
 libxml_use_internal_errors(true);
-$dom->loadHTML($page);
+$dom = new DOMDocument();
+$dom->loadHTML($html);
 libxml_clear_errors();
 
-foreach ($dom->getElementsByTagName('img') as $node)
-{
-	$localfile = $folder . '/' . uniqid() . '.jpg';
+// Busca todas as tags <img> da página
+$images = $dom->getElementsByTagName('img');
 
-	if($node->getAttribute('src')[0] == '/') {
-		$site = parse_url($url);
-		$toDownload = $site['scheme'] . '://' . $site['host'] . $node->getAttribute('src');
-	}
-	else {
-		$toDownload = (substr($node->getAttribute('src'), 0, 4) == 'http')
-		? $node->getAttribute('src') 
-		: 'http://' . $node->getAttribute('src');
-	}
-	
-	if(copy($toDownload, $localfile)) {
-		echo 'Downloading file ' . $node->getAttribute('src') . " to $localfile\n";
-	}
-
+if ($images->length == 0) {
+    echo "Nenhuma imagem encontrada na página.\n";
+    exit(0);
 }
 
+echo "Encontradas " . $images->length . " imagens.\n";
+
+// Percorre todas as imagens encontradas
+foreach ($images as $img) {
+    $src = $img->getAttribute('src');
+    if (!$src) {
+        continue;
+    }
+    
+    // Converte URLs relativas para absolutas
+    $img_url = resolveUrl($url, $src);
+    echo "Baixando: $img_url\n";
+    
+    // Faz o download do conteúdo da imagem
+    $img_data = file_get_contents($img_url);
+    if ($img_data === false) {
+        echo "Falha ao baixar: $img_url\n";
+        continue;
+    }
+    
+    // Define o nome do arquivo com base na URL (usando basename)
+    $parts = parse_url($img_url);
+    if (isset($parts['path'])) {
+        $filename = basename($parts['path']);
+        if (empty($filename)) {
+            $filename = uniqid('img_') . '.jpg';
+        }
+    } else {
+        $filename = uniqid('img_') . '.jpg';
+    }
+    
+    // Evita sobrescrever arquivos com o mesmo nome
+    $counter = 1;
+    $original_filename = $filename;
+    while (file_exists($filename)) {
+        $filename = $counter . "_" . $original_filename;
+        $counter++;
+    }
+    
+    // Salva o arquivo localmente
+    file_put_contents($filename, $img_data);
+    echo "Salvo: $filename\n";
+}
+
+echo "Download concluído.\n";
+
+/**
+ * Função para converter uma URL relativa em absoluta, com base na URL base.
+ *
+ * @param string $base A URL base da página.
+ * @param string $rel A URL relativa encontrada no HTML.
+ * @return string URL absoluta.
+ */
+function resolveUrl($base, $rel) {
+    // Se $rel já for uma URL absoluta, retorna como está.
+    if (parse_url($rel, PHP_URL_SCHEME) != '') {
+        return $rel;
+    }
+    
+    // Se a URL for protocol-relative (ex.: //exemplo.com/img.jpg)
+    if (substr($rel, 0, 2) == '//') {
+        $base_scheme = parse_url($base, PHP_URL_SCHEME);
+        return $base_scheme . ':' . $rel;
+    }
+    
+    // Se for apenas um fragmento ou query, anexa à URL base
+    if ($rel[0] == '#' || $rel[0] == '?') {
+        return $base . $rel;
+    }
+    
+    // Extrai os componentes da URL base
+    $base_parts = parse_url($base);
+    $base_scheme = isset($base_parts['scheme']) ? $base_parts['scheme'] : '';
+    $base_host   = isset($base_parts['host']) ? $base_parts['host'] : '';
+    $base_port   = isset($base_parts['port']) ? ':' . $base_parts['port'] : '';
+    $base_path   = isset($base_parts['path']) ? $base_parts['path'] : '';
+    
+    // Remove o arquivo (se houver) do caminho
+    $base_path = preg_replace('#/[^/]*$#', '', $base_path);
+    
+    // Se $rel iniciar com "/", é relativo à raiz
+    if ($rel[0] == '/') {
+        $path = $rel;
+    } else {
+        $path = $base_path . '/' . $rel;
+    }
+    
+    // Normaliza o caminho (remove "../" e "./")
+    $segments = explode('/', $path);
+    $resolved = array();
+    foreach ($segments as $segment) {
+        if ($segment === '' || $segment === '.') {
+            continue;
+        }
+        if ($segment === '..') {
+            array_pop($resolved);
+        } else {
+            $resolved[] = $segment;
+        }
+    }
+    $resolved_path = '/' . implode('/', $resolved);
+    
+    return $base_scheme . '://' . $base_host . $base_port . $resolved_path;
+}
