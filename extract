@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 // Verifica se a URL foi passada como parâmetro
 if ($argc < 2) {
